@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $imageUrl = $_POST['imageUrl'];
     $apiKey = $_POST['apiKey'];
     $topicName = $_POST['topicName'];
+    $url = $_POST['url']; // Retrieve the URL value from the form
 
     $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
 
@@ -17,12 +18,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'image' => $imageUrl
     ];
 
-    $extraNotificationData = ["message" => $notification, "moredata" => 'dd'];
+    $extraNotificationData = [
+        'message' => $notification,
+        'moredata' => 'dd',
+        'url' => $url // Include the URL in the extra data
+    ];
 
     $fcmNotification = [
         'to' => "/topics/" . $topicName,
         'notification' => $notification,
-        'data' => $extraNotificationData
+        'data' => $extraNotificationData // Include extra data in the payload
     ];
 
     $headers = [
@@ -41,13 +46,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     curl_close($ch);
 
     $resultMessage = htmlspecialchars($result);
-    //header("Location: index.php?notification=success");
-    
-    //exit();
-    // Prevent form re-submission on page refresh
-    
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -136,6 +137,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="topicName">Topic Name:</label>
             <input type="text" id="topicName" name="topicName" required>
         </div>
+        
+        <div class="form-group">
+    <label for="url">URL:</label>
+    <input type="text" id="url" name="url">
+</div>
 
         <input type="submit" value="Send Notification">
     </form>
